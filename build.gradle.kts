@@ -57,6 +57,7 @@ paper {
     serverDependencies {
         register("bukkit-utils") {
             load = PaperPluginDescription.RelativeLoadOrder.AFTER
+            required = true
         }
     }
 }
