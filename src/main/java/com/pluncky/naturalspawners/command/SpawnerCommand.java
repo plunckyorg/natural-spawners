@@ -16,6 +16,7 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -30,6 +31,15 @@ public class SpawnerCommand {
                 .requires(source -> source.getSender().hasPermission("naturalspawners.admin.give"))
                 .then(Commands.literal("dar")
                         .then(Commands.argument("jogador", ArgumentTypes.player())
+                                // Remove selectors from suggestions but they are still valid inputs
+                                .suggests((context, builder) -> {
+                                    for (Player player : Bukkit.getOnlinePlayers()) {
+                                        if (player.getName().startsWith(builder.getRemaining())) {
+                                            builder.suggest(player.getName());
+                                        }
+                                    }
+                                    return builder.buildFuture();
+                                })
                                 .then(Commands.argument("tipo", EntityTypeArgument.get())
                                         .executes(this::execute)
                                         .then(Commands.argument("quantidade", IntegerArgumentType.integer(1, 2304))
